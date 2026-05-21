@@ -80,7 +80,7 @@ const AddListing = () => {
     setLoading(true);
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
       const payload = {
         title,

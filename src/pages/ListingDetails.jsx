@@ -24,7 +24,7 @@ const ListingDetails = () => {
     const fetchListing = async () => {
       try {
         const token = await currentUser.getIdToken();
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
         const res = await axios.get(`${apiUrl}/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -66,7 +66,7 @@ const ListingDetails = () => {
 
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
       const res = await axios.patch(`${apiUrl}/listings/${id}/like`, {}, {
         headers: {
           Authorization: `Bearer ${token}`

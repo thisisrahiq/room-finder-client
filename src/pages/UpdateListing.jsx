@@ -36,7 +36,7 @@ const UpdateListing = () => {
     const fetchListing = async () => {
       try {
         const token = await currentUser.getIdToken();
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
         const res = await axios.get(`${apiUrl}/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -137,7 +137,7 @@ const UpdateListing = () => {
     setSubmitting(true);
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
       const payload = {
         title,

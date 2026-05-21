@@ -20,7 +20,7 @@ const BrowseListings = () => {
     const fetchListings = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
         const res = await axios.get(`${apiUrl}/listings`);
         if (res.data.success) {
           setListings(res.data.data);

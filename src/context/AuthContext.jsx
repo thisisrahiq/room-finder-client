@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const syncUserToBackend = async (firebaseUser, nameValue = null, photoURLValue = null) => {
     try {
       const token = await firebaseUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
       
       const payload = {
         uid: firebaseUser.uid,
