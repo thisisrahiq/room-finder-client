@@ -106,12 +106,16 @@ const ListingDetails = () => {
   const isOwner = currentUser.email === listing.userEmail;
   const isUnlocked = hasLiked || isOwner;
 
+  const fallbackImage = listing.listingType === 'Roommate'
+    ? 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80'
+    : 'https://images.unsplash.com/photo-1594498653385-d5172b53adc7?auto=format&fit=crop&w=1200&q=80';
+
   // Words for typewriter likes text
   const typewriterWords = [
-    `This space has received ${likesCount} likes.`,
+    `This listing has received ${likesCount} likes.`,
     isUnlocked 
       ? "Contact details are now visible below!"
-      : "Like this room listing to unlock owner contact details!"
+      : `Like this ${listing.listingType?.toLowerCase() || 'room'} listing to unlock owner contact details!`
   ];
 
   return (
@@ -125,6 +129,38 @@ const ListingDetails = () => {
 
       {/* Main card */}
       <div className="card bg-base-100 border border-base-200 shadow-xl overflow-hidden">
+        {/* Listing Hero Image */}
+        <div className="h-64 sm:h-96 w-full relative overflow-hidden bg-base-200">
+          <img
+            src={listing.imageUrl || fallbackImage}
+            alt={listing.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.src = fallbackImage;
+            }}
+          />
+          <div className="absolute top-4 left-4 flex gap-2">
+            {listing.listingType === 'Roommate' ? (
+              <span className="badge badge-secondary text-white font-bold px-3 py-2 text-xs shadow-md">
+                Roommate Wanted
+              </span>
+            ) : (
+              <span className="badge badge-accent text-white font-bold px-3 py-2 text-xs shadow-md">
+                Room Offering
+              </span>
+            )}
+            <span className="badge badge-neutral text-white font-bold px-3 py-2 text-xs shadow-md">
+              {listing.roomType}
+            </span>
+          </div>
+          
+          <div className="absolute bottom-4 right-4">
+            <span className="badge badge-primary text-white font-bold px-3 py-2 text-xs shadow-md uppercase tracking-wider">
+              {listing.availability || 'Available'}
+            </span>
+          </div>
+        </div>
+
         {/* Banner with typewriter */}
         <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 border-b border-base-200 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="space-y-1">
@@ -166,9 +202,20 @@ const ListingDetails = () => {
         <div className="card-body p-8 space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             <div className="space-y-2">
-              <span className="badge badge-secondary font-bold px-3 py-1 text-xs">
-                {listing.roomType} Room
-              </span>
+              <div className="flex flex-wrap gap-2">
+                {listing.listingType === 'Roommate' ? (
+                  <span className="badge badge-secondary font-bold px-3 py-1 text-xs">
+                    Roommate Listing
+                  </span>
+                ) : (
+                  <span className="badge badge-accent text-white font-bold px-3 py-1 text-xs">
+                    Room Listing
+                  </span>
+                )}
+                <span className="badge badge-primary badge-outline font-bold px-3 py-1 text-xs">
+                  {listing.roomType}
+                </span>
+              </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-display">{listing.title}</h1>
               <div className="flex items-center text-sm text-base-content/70">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">

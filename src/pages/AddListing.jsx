@@ -21,12 +21,36 @@ const AddListing = () => {
   const [location, setLocation] = useState('');
   const [rent, setRent] = useState('');
   const [roomType, setRoomType] = useState('Single');
+  const [listingType, setListingType] = useState('Room');
+  const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [availability, setAvailability] = useState('Available');
   const [selectedTags, setSelectedTags] = useState([]);
   const [customTag, setCustomTag] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Handle local image file upload converting to base64
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        Swal.fire({
+          title: 'File Too Large',
+          text: 'Please select an image smaller than 2MB.',
+          icon: 'warning',
+          background: themeIsDark ? '#1e293b' : '#ffffff',
+          color: themeIsDark ? '#f8fafc' : '#0f172a',
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Toggle suggested tags
   const handleTagToggle = (tag) => {
@@ -54,7 +78,7 @@ const AddListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !location || !rent || !roomType || !description || !contactInfo || !availability) {
+    if (!title || !location || !rent || !roomType || !listingType || !description || !contactInfo || !availability) {
       Swal.fire({
         title: 'Validation Error',
         text: 'Please fill in all required fields.',
@@ -90,7 +114,9 @@ const AddListing = () => {
         lifestyle: selectedTags,
         description,
         contactInfo,
-        availability
+        availability,
+        listingType,
+        imageUrl
       };
 
       const res = await axios.post(`${apiUrl}/listings`, payload, {
@@ -163,8 +189,8 @@ const AddListing = () => {
               </div>
             </div>
 
-            {/* Title & Room Type */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Title & Room Type & Listing Type */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="form-control sm:col-span-2">
                 <label className="label py-1">
                   <span className="label-text font-semibold">Listing Title *</span>
@@ -177,6 +203,21 @@ const AddListing = () => {
                   className="input input-bordered focus:input-primary rounded-xl"
                   required
                 />
+              </div>
+
+              <div className="form-control">
+                <label className="label py-1">
+                  <span className="label-text font-semibold">Listing Type *</span>
+                </label>
+                <select
+                  value={listingType}
+                  onChange={(e) => setListingType(e.target.value)}
+                  className="select select-bordered focus:select-primary rounded-xl font-medium"
+                  required
+                >
+                  <option value="Room">Offering a Room</option>
+                  <option value="Roommate">Looking for Roommate</option>
+                </select>
               </div>
 
               <div className="form-control">
@@ -197,7 +238,7 @@ const AddListing = () => {
               </div>
             </div>
 
-            {/* Location & Rent & Availability */}
+            {/* Location & Rent */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="form-control sm:col-span-2">
                 <label className="label py-1">
@@ -225,6 +266,71 @@ const AddListing = () => {
                   className="input input-bordered focus:input-primary rounded-xl"
                   required
                 />
+              </div>
+            </div>
+
+            {/* Image Upload Option */}
+            <div className="form-control space-y-3">
+              <label className="label py-1">
+                <span className="label-text font-semibold">Listing Image</span>
+              </label>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Uploader */}
+                <div className="flex flex-col space-y-2 p-4 bg-base-200/40 rounded-2xl border border-base-200">
+                  <span className="text-xs font-semibold text-base-content/75">Upload Local Image</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="file-input file-input-bordered file-input-primary file-input-sm w-full rounded-lg"
+                  />
+                  <div className="text-[10px] text-base-content/50">
+                    Max size 2MB (converts to base64 format)
+                  </div>
+                  
+                  <div className="divider text-xs text-base-content/40 my-1">OR</div>
+                  
+                  <span className="text-xs font-semibold text-base-content/75">Paste Image URL</span>
+                  <input
+                    type="url"
+                    placeholder="e.g. https://images.unsplash.com/..."
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="input input-bordered input-sm focus:input-primary rounded-lg w-full"
+                  />
+                </div>
+
+                {/* Preview */}
+                <div className="flex flex-col items-center justify-center p-4 bg-base-200/20 rounded-2xl border border-dashed border-base-300 min-h-[160px]">
+                  {imageUrl ? (
+                    <div className="relative group w-full h-full max-h-[160px] rounded-xl overflow-hidden shadow-md">
+                      <img
+                        src={imageUrl}
+                        alt="Listing Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = 'https://images.unsplash.com/photo-1594498653385-d5172b53adc7?auto=format&fit=crop&w=400&q=80';
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setImageUrl('')}
+                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white font-bold p-1 rounded-full text-xs shadow-md transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center text-base-content/40 space-y-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-xs font-semibold block">No image selected</span>
+                      <span className="text-[10px] block">Upload a file or enter an URL</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

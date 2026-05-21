@@ -100,7 +100,7 @@ const MyListings = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold tracking-tight font-display">My Room Listings</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight font-display">My Listings</h1>
           <p className="text-sm text-base-content/65">
             Manage your room and roommate postings, monitor statuses, and update details.
           </p>
@@ -123,58 +123,89 @@ const MyListings = () => {
           <table className="table w-full">
             <thead>
               <tr className="bg-base-200/50 text-base-content/85">
-                <th className="rounded-tl-2xl">Title</th>
-                <th>Room Type</th>
+                <th className="rounded-tl-2xl">Preview</th>
+                <th>Title & Room/Listing Type</th>
                 <th>Rent</th>
                 <th>Status</th>
                 <th className="rounded-tr-2xl text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {myListings.map((item) => (
-                <tr key={item._id} className="hover:bg-base-200/30 transition-colors">
-                  {/* Title & location */}
-                  <td>
-                    <div className="font-semibold text-sm line-clamp-1">{item.title}</div>
-                    <div className="text-xs text-base-content/50 truncate max-w-[280px]">{item.location}</div>
-                  </td>
-                  {/* Room type */}
-                  <td className="text-sm font-medium">{item.roomType}</td>
-                  {/* Rent */}
-                  <td className="font-bold text-primary">${item.rent}/mo</td>
-                  {/* Status */}
-                  <td>
-                    <span className={`badge badge-sm font-semibold rounded-lg ${
-                      item.availability === 'Available' 
-                        ? 'badge-success text-white' 
-                        : 'badge-error text-white'
-                    }`}>
-                      {item.availability}
-                    </span>
-                  </td>
-                  {/* Actions */}
-                  <td className="text-right space-x-2">
-                    <Link 
-                      to={`/listings/${item._id}`} 
-                      className="btn btn-ghost btn-xs text-primary font-bold hover:bg-primary/10 rounded-md"
-                    >
-                      View
-                    </Link>
-                    <Link 
-                      to={`/listings/update/${item._id}`} 
-                      className="btn btn-secondary btn-xs text-white font-bold rounded-md px-3"
-                    >
-                      Update
-                    </Link>
-                    <button 
-                      onClick={() => handleDelete(item._id)} 
-                      className="btn btn-error btn-outline btn-xs font-bold rounded-md"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {myListings.map((item) => {
+                const fallbackImage = item.listingType === 'Roommate'
+                  ? 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=200&q=80'
+                  : 'https://images.unsplash.com/photo-1594498653385-d5172b53adc7?auto=format&fit=crop&w=200&q=80';
+
+                return (
+                  <tr key={item._id} className="hover:bg-base-200/30 transition-colors">
+                    {/* Thumbnail */}
+                    <td>
+                      <div className="w-16 h-12 rounded-lg overflow-hidden border border-base-200 bg-base-200">
+                        <img
+                          src={item.imageUrl || fallbackImage}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = fallbackImage;
+                          }}
+                        />
+                      </div>
+                    </td>
+                    {/* Title & Room/Listing Type */}
+                    <td>
+                      <div className="font-semibold text-sm line-clamp-1 max-w-[280px]">{item.title}</div>
+                      <div className="flex gap-1.5 mt-1">
+                        {item.listingType === 'Roommate' ? (
+                          <span className="badge badge-secondary badge-xs text-[9px] font-bold px-1.5 py-1">
+                            Roommate
+                          </span>
+                        ) : (
+                          <span className="badge badge-accent badge-xs text-[9px] font-bold px-1.5 py-1 text-white">
+                            Room
+                          </span>
+                        )}
+                        <span className="badge badge-neutral badge-xs text-[9px] font-bold px-1.5 py-1">
+                          {item.roomType}
+                        </span>
+                      </div>
+                      <div className="text-xs text-base-content/50 truncate max-w-[280px] mt-0.5">{item.location}</div>
+                    </td>
+                    {/* Rent */}
+                    <td className="font-bold text-primary">${item.rent}/mo</td>
+                    {/* Status */}
+                    <td>
+                      <span className={`badge badge-sm font-semibold rounded-lg ${
+                        item.availability === 'Available' 
+                          ? 'badge-success text-white' 
+                          : 'badge-error text-white'
+                      }`}>
+                        {item.availability}
+                      </span>
+                    </td>
+                    {/* Actions */}
+                    <td className="text-right space-x-2">
+                      <Link 
+                        to={`/listings/${item._id}`} 
+                        className="btn btn-ghost btn-xs text-primary font-bold hover:bg-primary/10 rounded-md"
+                      >
+                        View
+                      </Link>
+                      <Link 
+                        to={`/listings/update/${item._id}`} 
+                        className="btn btn-secondary btn-xs text-white font-bold rounded-md px-3"
+                      >
+                        Update
+                      </Link>
+                      <button 
+                        onClick={() => handleDelete(item._id)} 
+                        className="btn btn-error btn-outline btn-xs font-bold rounded-md"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

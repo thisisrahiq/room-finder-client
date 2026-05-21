@@ -2,24 +2,50 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const ListingCard = ({ listing }) => {
-  const { _id, title, rent, roomType, location, lifestyle, userName } = listing;
+  const { _id, title, rent, roomType, location, lifestyle, userName, listingType, imageUrl } = listing;
+
+  const fallbackImage = listingType === 'Roommate'
+    ? 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=600&q=80'
+    : 'https://images.unsplash.com/photo-1594498653385-d5172b53adc7?auto=format&fit=crop&w=600&q=80';
 
   return (
-    <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-200 hover:-translate-y-1 group">
-      <div className="card-body p-6 flex flex-col justify-between">
+    <div className="card bg-base-100 shadow-lg hover:shadow-xl transition-all duration-300 border border-base-200 hover:-translate-y-1 group overflow-hidden">
+      <figure className="relative h-48 w-full overflow-hidden bg-base-200">
+        <img
+          src={imageUrl || fallbackImage}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            e.target.src = fallbackImage;
+          }}
+        />
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1">
+          {listingType === 'Roommate' ? (
+            <span className="badge badge-secondary text-white text-[10px] font-bold px-2 py-1 shadow-sm">
+              Roommate
+            </span>
+          ) : (
+            <span className="badge badge-accent text-white text-[10px] font-bold px-2 py-1 shadow-sm">
+              Room
+            </span>
+          )}
+          <span className="badge badge-neutral text-white text-[10px] font-bold px-2 py-1 shadow-sm">
+            {roomType}
+          </span>
+        </div>
+      </figure>
+
+      <div className="card-body p-5 flex flex-col justify-between">
         <div>
           {/* Header info */}
-          <div className="flex justify-between items-start mb-2">
-            <span className="badge badge-primary badge-outline text-xs font-semibold px-2.5 py-1">
-              {roomType}
-            </span>
-            <span className="text-xl font-bold text-primary">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xl font-black text-primary">
               ${rent}<span className="text-xs text-base-content/60 font-medium">/mo</span>
             </span>
           </div>
 
           {/* Title */}
-          <h3 className="card-title text-lg font-bold line-clamp-1 mb-2 group-hover:text-primary transition-colors">
+          <h3 className="card-title text-base font-bold line-clamp-1 mb-2 group-hover:text-primary transition-colors">
             {title}
           </h3>
 

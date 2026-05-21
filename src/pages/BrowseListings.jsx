@@ -12,9 +12,22 @@ const BrowseListings = () => {
   const [searchLocation, setSearchLocation] = useState('');
   const [filterRoomType, setFilterRoomType] = useState('');
   const [filterAvailability, setFilterAvailability] = useState('');
-
-  // Initial tag parameter from URL (e.g., from home lifestyle section)
+  // Initial parameters from URL
   const tagParam = searchParams.get('tag');
+  const typeParam = searchParams.get('type');
+
+  const [filterListingType, setFilterListingType] = useState(() => {
+    if (typeParam === 'Room' || typeParam === 'Roommate') return typeParam;
+    return 'All';
+  });
+
+  useEffect(() => {
+    if (typeParam === 'Room' || typeParam === 'Roommate') {
+      setFilterListingType(typeParam);
+    } else if (!typeParam) {
+      setFilterListingType('All');
+    }
+  }, [typeParam]);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -36,6 +49,10 @@ const BrowseListings = () => {
 
   // Filter listings client-side
   const filteredListings = listings.filter((item) => {
+    // Listing Type Filter
+    if (filterListingType !== 'All' && item.listingType !== filterListingType) {
+      return false;
+    }
     // Location Search
     if (searchLocation && !item.location.toLowerCase().includes(searchLocation.toLowerCase())) {
       return false;
@@ -59,7 +76,8 @@ const BrowseListings = () => {
     setSearchLocation('');
     setFilterRoomType('');
     setFilterAvailability('');
-    if (tagParam) {
+    setFilterListingType('All');
+    if (tagParam || typeParam) {
       setSearchParams({});
     }
   };
@@ -72,6 +90,42 @@ const BrowseListings = () => {
         <p className="text-base-content/75 text-sm">
           Discover roommate pairings and available rental rooms. Review details and connect.
         </p>
+      </div>
+
+      {/* Listing Type Tabs */}
+      <div className="flex justify-center sm:justify-start">
+        <div className="tabs tabs-boxed bg-base-200/60 p-1.5 rounded-2xl border border-base-200/50 gap-1">
+          <button
+            onClick={() => setFilterListingType('All')}
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
+              filterListingType === 'All'
+                ? 'tab-active bg-primary text-white shadow-sm'
+                : 'text-base-content/70 hover:bg-base-300/40'
+            }`}
+          >
+            All Listings
+          </button>
+          <button
+            onClick={() => setFilterListingType('Room')}
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
+              filterListingType === 'Room'
+                ? 'tab-active bg-accent text-white shadow-sm'
+                : 'text-base-content/70 hover:bg-base-300/40'
+            }`}
+          >
+            Rooms Offering
+          </button>
+          <button
+            onClick={() => setFilterListingType('Roommate')}
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
+              filterListingType === 'Roommate'
+                ? 'tab-active bg-secondary text-white shadow-sm'
+                : 'text-base-content/70 hover:bg-base-300/40'
+            }`}
+          >
+            Roommates Wanted
+          </button>
+        </div>
       </div>
 
       {/* Filter Toolbar */}
@@ -157,8 +211,9 @@ const BrowseListings = () => {
             {/* Table Head */}
             <thead>
               <tr className="bg-base-200/50 text-base-content/85">
-                <th className="rounded-tl-2xl">Posted By</th>
-                <th>Title / Type</th>
+                <th className="rounded-tl-2xl">Preview</th>
+                <th>Posted By</th>
+                <th>Title & Room/Listing Type</th>
                 <th>Location</th>
                 <th>Rent</th>
                 <th>Status</th>
@@ -167,58 +222,88 @@ const BrowseListings = () => {
             </thead>
             {/* Table Body */}
             <tbody>
-              {filteredListings.map((item) => (
-                <tr key={item._id} className="hover:bg-base-200/30 transition-colors">
-                  {/* User details */}
-                  <td>
-                    <div className="flex items-center space-x-3">
-                      <div className="avatar placeholder">
-                        <div className="bg-primary/10 text-primary font-bold rounded-full w-10 h-10 flex items-center justify-center">
-                          {item.userName?.charAt(0).toUpperCase() || 'U'}
+              {filteredListings.map((item) => {
+                const fallbackImage = item.listingType === 'Roommate'
+                  ? 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=200&q=80'
+                  : 'https://images.unsplash.com/photo-1594498653385-d5172b53adc7?auto=format&fit=crop&w=200&q=80';
+
+                return (
+                  <tr key={item._id} className="hover:bg-base-200/30 transition-colors">
+                    {/* Listing Preview Thumbnail */}
+                    <td>
+                      <div className="w-16 h-12 rounded-lg overflow-hidden border border-base-200 bg-base-200">
+                        <img
+                          src={item.imageUrl || fallbackImage}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = fallbackImage;
+                          }}
+                        />
+                      </div>
+                    </td>
+                    {/* User details */}
+                    <td>
+                      <div className="flex items-center space-x-3">
+                        <div className="avatar placeholder">
+                          <div className="bg-primary/10 text-primary font-bold rounded-full w-10 h-10 flex items-center justify-center">
+                            {item.userName?.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="font-semibold text-sm">{item.userName || 'Anonymous'}</div>
+                          <div className="text-xs text-base-content/50">{item.userEmail}</div>
                         </div>
                       </div>
-                      <div>
-                        <div className="font-semibold text-sm">{item.userName || 'Anonymous'}</div>
-                        <div className="text-xs text-base-content/50">{item.userEmail}</div>
+                    </td>
+                    {/* Title and Listing/Room Type */}
+                    <td>
+                      <div className="font-semibold text-sm line-clamp-1 max-w-[220px]">{item.title}</div>
+                      <div className="flex gap-1.5 mt-1">
+                        {item.listingType === 'Roommate' ? (
+                          <span className="badge badge-secondary badge-xs text-[9px] font-bold px-1.5 py-1">
+                            Roommate
+                          </span>
+                        ) : (
+                          <span className="badge badge-accent badge-xs text-[9px] font-bold px-1.5 py-1 text-white">
+                            Room
+                          </span>
+                        )}
+                        <span className="badge badge-neutral badge-xs text-[9px] font-bold px-1.5 py-1">
+                          {item.roomType}
+                        </span>
                       </div>
-                    </div>
-                  </td>
-                  {/* Title and Room Type */}
-                  <td>
-                    <div className="font-semibold text-sm line-clamp-1">{item.title}</div>
-                    <span className="badge badge-secondary badge-sm text-[10px] font-semibold mt-1">
-                      {item.roomType}
-                    </span>
-                  </td>
-                  {/* Location */}
-                  <td className="text-sm text-base-content/80 max-w-[200px] truncate">
-                    {item.location}
-                  </td>
-                  {/* Rent */}
-                  <td className="font-bold text-primary">
-                    ${item.rent}<span className="text-xs text-base-content/50 font-normal">/mo</span>
-                  </td>
-                  {/* Status */}
-                  <td>
-                    <span className={`badge badge-sm font-semibold rounded-lg ${
-                      item.availability === 'Available' 
-                        ? 'badge-success text-white' 
-                        : 'badge-error text-white'
-                    }`}>
-                      {item.availability}
-                    </span>
-                  </td>
-                  {/* View details */}
-                  <td className="text-right">
-                    <Link 
-                      to={`/listings/${item._id}`} 
-                      className="btn btn-primary btn-sm rounded-lg font-semibold text-xs px-4"
-                    >
-                      See Details
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    {/* Location */}
+                    <td className="text-sm text-base-content/80 max-w-[180px] truncate">
+                      {item.location}
+                    </td>
+                    {/* Rent */}
+                    <td className="font-bold text-primary">
+                      ${item.rent}<span className="text-xs text-base-content/50 font-normal">/mo</span>
+                    </td>
+                    {/* Status */}
+                    <td>
+                      <span className={`badge badge-sm font-semibold rounded-lg ${
+                        item.availability === 'Available' 
+                          ? 'badge-success text-white' 
+                          : 'badge-error text-white'
+                      }`}>
+                        {item.availability}
+                      </span>
+                    </td>
+                    {/* View details */}
+                    <td className="text-right">
+                      <Link 
+                        to={`/listings/${item._id}`} 
+                        className="btn btn-primary btn-sm rounded-lg font-semibold text-xs px-4"
+                      >
+                        See Details
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

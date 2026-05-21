@@ -93,11 +93,11 @@ const Home = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 pt-2">
-            <Link to="/listings" className="btn btn-primary rounded-xl px-6 font-medium">
+            <Link to="/listings?type=Room" className="btn btn-primary rounded-xl px-6 font-medium">
               Browse Rooms
             </Link>
-            <Link to="/add-listing" className="btn btn-outline btn-secondary rounded-xl px-6 font-medium">
-              Find Roommate
+            <Link to="/listings?type=Roommate" className="btn btn-outline btn-secondary rounded-xl px-6 font-medium text-secondary hover:text-white">
+              Browse Roommates
             </Link>
           </div>
         </div>
