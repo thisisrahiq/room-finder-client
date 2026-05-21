@@ -32,8 +32,11 @@ const ListingDetails = () => {
         });
 
         if (res.data.success) {
-          setListing(res.data.data);
-          setLikesCount(res.data.data.likeCount || 0);
+          const item = res.data.data;
+          setListing(item);
+          setLikesCount(item.likeCount || 0);
+          const initiallyLiked = item.likedBy && Array.isArray(item.likedBy) && item.likedBy.includes(currentUser?.email);
+          setHasLiked(initiallyLiked);
         }
       } catch (err) {
         console.error(err);
@@ -74,25 +77,39 @@ const ListingDetails = () => {
       });
 
       if (res.data.success) {
-        setHasLiked(true);
-        setLikesCount(prev => prev + 1);
-        localStorage.setItem(`liked_${id}`, 'true');
+        const { liked, likeCount } = res.data.data;
+        setHasLiked(liked);
+        setLikesCount(likeCount);
 
-        Swal.fire({
-          title: 'You Liked This!',
-          text: 'Contact details have been unlocked successfully.',
-          icon: 'success',
-          timer: 1800,
-          showConfirmButton: false,
-          background: isDark ? '#1e293b' : '#ffffff',
-          color: isDark ? '#f8fafc' : '#0f172a',
-        });
+        if (liked) {
+          localStorage.setItem(`liked_${id}`, 'true');
+          Swal.fire({
+            title: 'Liked Listing!',
+            text: 'Contact details have been unlocked successfully.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            background: isDark ? '#1e293b' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#0f172a',
+          });
+        } else {
+          localStorage.removeItem(`liked_${id}`);
+          Swal.fire({
+            title: 'Unliked Listing',
+            text: 'Listing unliked. Contact details are now locked.',
+            icon: 'info',
+            timer: 1500,
+            showConfirmButton: false,
+            background: isDark ? '#1e293b' : '#ffffff',
+            color: isDark ? '#f8fafc' : '#0f172a',
+          });
+        }
       }
     } catch (err) {
       console.error(err);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to add like. Try again.',
+        text: err.response?.data?.message || 'Failed to update like. Try again.',
         icon: 'error',
         background: isDark ? '#1e293b' : '#ffffff',
         color: isDark ? '#f8fafc' : '#0f172a',
@@ -181,19 +198,25 @@ const ListingDetails = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={handleLike}
-              disabled={isOwner || hasLiked}
-              className={`btn btn-sm rounded-xl font-bold gap-2 ${
+              disabled={isOwner}
+              className={`btn btn-sm rounded-xl font-bold gap-2 transition-all ${
                 hasLiked 
-                  ? 'btn-success text-white' 
+                  ? 'btn-success text-white hover:btn-error' 
                   : isOwner 
                     ? 'btn-neutral cursor-not-allowed opacity-60' 
                     : 'btn-primary'
               }`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-              </svg>
-              {hasLiked ? 'Liked' : `Like (${likesCount})`}
+              {hasLiked ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              )}
+              {hasLiked ? `Liked (${likesCount})` : `Like (${likesCount})`}
             </button>
           </div>
         </div>

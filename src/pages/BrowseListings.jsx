@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const BrowseListings = () => {
+  const { currentUser } = useAuth();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,6 +14,7 @@ const BrowseListings = () => {
   const [searchLocation, setSearchLocation] = useState('');
   const [filterRoomType, setFilterRoomType] = useState('');
   const [filterAvailability, setFilterAvailability] = useState('');
+  const [filterLikedOnly, setFilterLikedOnly] = useState(false);
   // Initial parameters from URL
   const tagParam = searchParams.get('tag');
   const typeParam = searchParams.get('type');
@@ -69,6 +72,12 @@ const BrowseListings = () => {
     if (tagParam && (!item.lifestyle || !item.lifestyle.some(t => t.toLowerCase() === tagParam.toLowerCase()))) {
       return false;
     }
+    // Liked Only Filter
+    if (filterLikedOnly && currentUser) {
+      if (!item.likedBy || !Array.isArray(item.likedBy) || !item.likedBy.includes(currentUser.email)) {
+        return false;
+      }
+    }
     return true;
   });
 
@@ -77,6 +86,7 @@ const BrowseListings = () => {
     setFilterRoomType('');
     setFilterAvailability('');
     setFilterListingType('All');
+    setFilterLikedOnly(false);
     if (tagParam || typeParam) {
       setSearchParams({});
     }
@@ -129,9 +139,9 @@ const BrowseListings = () => {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="bg-base-200/50 p-6 rounded-2xl border border-base-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+      <div className="bg-base-200/50 p-6 rounded-2xl border border-base-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end">
         {/* Search Location */}
-        <div className="form-control w-full">
+        <div className={`form-control w-full ${currentUser ? 'lg:col-span-3' : 'lg:col-span-4'}`}>
           <label className="label py-1">
             <span className="label-text text-xs font-semibold">Search by Location</span>
           </label>
@@ -145,7 +155,7 @@ const BrowseListings = () => {
         </div>
 
         {/* Room Type */}
-        <div className="form-control w-full">
+        <div className={`form-control w-full ${currentUser ? 'lg:col-span-3' : 'lg:col-span-3'}`}>
           <label className="label py-1">
             <span className="label-text text-xs font-semibold">Room Type</span>
           </label>
@@ -163,7 +173,7 @@ const BrowseListings = () => {
         </div>
 
         {/* Availability */}
-        <div className="form-control w-full">
+        <div className={`form-control w-full ${currentUser ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
           <label className="label py-1">
             <span className="label-text text-xs font-semibold">Status</span>
           </label>
@@ -178,13 +188,33 @@ const BrowseListings = () => {
           </select>
         </div>
 
+        {/* Show Liked Only Toggle (Only visible to authenticated users) */}
+        {currentUser && (
+          <div className="form-control w-full lg:col-span-2">
+            <label className="label py-1">
+              <span className="label-text text-xs font-semibold text-transparent select-none">Likes Filter</span>
+            </label>
+            <label className="label py-1 justify-start gap-2 cursor-pointer select-none h-[32px] items-center">
+              <input
+                type="checkbox"
+                className="toggle toggle-primary toggle-sm"
+                checked={filterLikedOnly}
+                onChange={(e) => setFilterLikedOnly(e.target.checked)}
+              />
+              <span className="label-text text-xs font-semibold">Show Liked Only</span>
+            </label>
+          </div>
+        )}
+
         {/* Clear Filters */}
-        <button
-          onClick={clearFilters}
-          className="btn btn-neutral btn-sm rounded-lg font-medium w-full"
-        >
-          Reset Filters
-        </button>
+        <div className="w-full lg:col-span-2">
+          <button
+            onClick={clearFilters}
+            className="btn btn-neutral btn-sm rounded-lg font-medium w-full"
+          >
+            Reset Filters
+          </button>
+        </div>
       </div>
 
       {/* Tag indicator from Home */}
