@@ -36,7 +36,7 @@ const BrowseListings = () => {
     const fetchListings = async () => {
       setLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
         const res = await axios.get(`${apiUrl}/listings`);
         if (res.data.success) {
           setListings(res.data.data);
@@ -107,31 +107,28 @@ const BrowseListings = () => {
         <div className="tabs tabs-boxed bg-base-200/60 p-1.5 rounded-2xl border border-base-200/50 gap-1">
           <button
             onClick={() => setFilterListingType('All')}
-            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
-              filterListingType === 'All'
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${filterListingType === 'All'
                 ? 'tab-active bg-primary text-white shadow-sm'
                 : 'text-base-content/70 hover:bg-base-300/40'
-            }`}
+              }`}
           >
             All Listings
           </button>
           <button
             onClick={() => setFilterListingType('Room')}
-            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
-              filterListingType === 'Room'
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${filterListingType === 'Room'
                 ? 'tab-active bg-accent text-white shadow-sm'
                 : 'text-base-content/70 hover:bg-base-300/40'
-            }`}
+              }`}
           >
             Rooms Offering
           </button>
           <button
             onClick={() => setFilterListingType('Roommate')}
-            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${
-              filterListingType === 'Roommate'
+            className={`tab tab-sm rounded-xl font-bold px-5 transition-all ${filterListingType === 'Roommate'
                 ? 'tab-active bg-secondary text-white shadow-sm'
                 : 'text-base-content/70 hover:bg-base-300/40'
-            }`}
+              }`}
           >
             Roommates Wanted
           </button>
@@ -314,18 +311,17 @@ const BrowseListings = () => {
                     </td>
                     {/* Status */}
                     <td>
-                      <span className={`badge badge-sm font-semibold rounded-lg ${
-                        item.availability === 'Available' 
-                          ? 'badge-success text-white' 
+                      <span className={`badge badge-sm font-semibold rounded-lg ${item.availability === 'Available'
+                          ? 'badge-success text-white'
                           : 'badge-error text-white'
-                      }`}>
+                        }`}>
                         {item.availability}
                       </span>
                     </td>
                     {/* View details */}
                     <td className="text-right">
-                      <Link 
-                        to={`/listings/${item._id}`} 
+                      <Link
+                        to={`/listings/${item._id}`}
                         className="btn btn-primary btn-sm rounded-lg font-semibold text-xs px-4"
                       >
                         See Details

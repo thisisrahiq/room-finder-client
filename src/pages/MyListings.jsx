@@ -17,7 +17,7 @@ const MyListings = () => {
   const fetchMyListings = async () => {
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
       const res = await axios.get(`${apiUrl}/listings?userEmail=${currentUser.email}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -61,7 +61,7 @@ const MyListings = () => {
       if (result.isConfirmed) {
         try {
           const token = await currentUser.getIdToken();
-          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
           const res = await axios.delete(`${apiUrl}/listings/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -174,30 +174,29 @@ const MyListings = () => {
                     <td className="font-bold text-primary">${item.rent}/mo</td>
                     {/* Status */}
                     <td>
-                      <span className={`badge badge-sm font-semibold rounded-lg ${
-                        item.availability === 'Available' 
-                          ? 'badge-success text-white' 
+                      <span className={`badge badge-sm font-semibold rounded-lg ${item.availability === 'Available'
+                          ? 'badge-success text-white'
                           : 'badge-error text-white'
-                      }`}>
+                        }`}>
                         {item.availability}
                       </span>
                     </td>
                     {/* Actions */}
                     <td className="text-right space-x-2">
-                      <Link 
-                        to={`/listings/${item._id}`} 
+                      <Link
+                        to={`/listings/${item._id}`}
                         className="btn btn-ghost btn-xs text-primary font-bold hover:bg-primary/10 rounded-md"
                       >
                         View
                       </Link>
-                      <Link 
-                        to={`/listings/update/${item._id}`} 
+                      <Link
+                        to={`/listings/update/${item._id}`}
                         className="btn btn-secondary btn-xs text-white font-bold rounded-md px-3"
                       >
                         Update
                       </Link>
-                      <button 
-                        onClick={() => handleDelete(item._id)} 
+                      <button
+                        onClick={() => handleDelete(item._id)}
                         className="btn btn-error btn-outline btn-xs font-bold rounded-md"
                       >
                         Delete

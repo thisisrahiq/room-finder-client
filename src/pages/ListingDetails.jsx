@@ -24,7 +24,7 @@ const ListingDetails = () => {
     const fetchListing = async () => {
       try {
         const token = await currentUser.getIdToken();
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
         const res = await axios.get(`${apiUrl}/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -69,7 +69,7 @@ const ListingDetails = () => {
 
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
       const res = await axios.patch(`${apiUrl}/listings/${id}/like`, {}, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -130,7 +130,7 @@ const ListingDetails = () => {
   // Words for typewriter likes text
   const typewriterWords = [
     `This listing has received ${likesCount} likes.`,
-    isUnlocked 
+    isUnlocked
       ? "Contact details are now visible below!"
       : `Like this ${listing.listingType?.toLowerCase() || 'room'} listing to unlock owner contact details!`
   ];
@@ -170,7 +170,7 @@ const ListingDetails = () => {
               {listing.roomType}
             </span>
           </div>
-          
+
           <div className="absolute bottom-4 right-4">
             <span className="badge badge-primary text-white font-bold px-3 py-2 text-xs shadow-md uppercase tracking-wider">
               {listing.availability || 'Available'}
@@ -199,13 +199,12 @@ const ListingDetails = () => {
             <button
               onClick={handleLike}
               disabled={isOwner}
-              className={`btn btn-sm rounded-xl font-bold gap-2 transition-all ${
-                hasLiked 
-                  ? 'btn-success text-white hover:btn-error' 
-                  : isOwner 
-                    ? 'btn-neutral cursor-not-allowed opacity-60' 
+              className={`btn btn-sm rounded-xl font-bold gap-2 transition-all ${hasLiked
+                  ? 'btn-success text-white hover:btn-error'
+                  : isOwner
+                    ? 'btn-neutral cursor-not-allowed opacity-60'
                     : 'btn-primary'
-              }`}
+                }`}
             >
               {hasLiked ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4.5 w-4.5" viewBox="0 0 20 20" fill="currentColor">
@@ -296,11 +295,10 @@ const ListingDetails = () => {
             </div>
 
             {/* Locked/Unlocked Contact info */}
-            <div className={`p-5 rounded-2xl border transition-all duration-500 relative overflow-hidden flex flex-col justify-center ${
-              isUnlocked 
-                ? 'bg-success/5 border-success/20 text-success-content' 
+            <div className={`p-5 rounded-2xl border transition-all duration-500 relative overflow-hidden flex flex-col justify-center ${isUnlocked
+                ? 'bg-success/5 border-success/20 text-success-content'
                 : 'bg-base-300/30 border-base-300 text-base-content/50 backdrop-blur-sm'
-            }`}>
+              }`}>
               {isUnlocked ? (
                 <div className="space-y-2">
                   <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">
@@ -319,7 +317,7 @@ const ListingDetails = () => {
                   <span className="text-xs font-bold uppercase tracking-wider block text-base-content/70">
                     Contact Info Locked
                   </span>
-                  <button 
+                  <button
                     onClick={handleLike}
                     className="btn btn-link btn-xs text-primary font-bold no-underline hover:underline p-0"
                   >

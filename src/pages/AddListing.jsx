@@ -6,8 +6,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const SUGGESTED_LIFESTYLE_TAGS = [
-  "Non-smoker", "Pet-friendly", "Student", "Professional", 
-  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy", 
+  "Non-smoker", "Pet-friendly", "Student", "Professional",
+  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy",
   "Gym Lover", "WFH"
 ];
 
@@ -104,7 +104,7 @@ const AddListing = () => {
     setLoading(true);
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
 
       const payload = {
         title,
@@ -274,7 +274,7 @@ const AddListing = () => {
               <label className="label py-1">
                 <span className="label-text font-semibold">Listing Image</span>
               </label>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Uploader */}
                 <div className="flex flex-col space-y-2 p-4 bg-base-200/40 rounded-2xl border border-base-200">
@@ -288,9 +288,9 @@ const AddListing = () => {
                   <div className="text-[10px] text-base-content/50">
                     Max size 2MB (converts to base64 format)
                   </div>
-                  
+
                   <div className="divider text-xs text-base-content/40 my-1">OR</div>
-                  
+
                   <span className="text-xs font-semibold text-base-content/75">Paste Image URL</span>
                   <input
                     type="url"

@@ -7,8 +7,8 @@ import Swal from 'sweetalert2';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const SUGGESTED_LIFESTYLE_TAGS = [
-  "Non-smoker", "Pet-friendly", "Student", "Professional", 
-  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy", 
+  "Non-smoker", "Pet-friendly", "Student", "Professional",
+  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy",
   "Gym Lover", "WFH"
 ];
 
@@ -52,7 +52,7 @@ const UpdateListing = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -60,7 +60,7 @@ const UpdateListing = () => {
     const fetchListing = async () => {
       try {
         const token = await currentUser.getIdToken();
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
         const res = await axios.get(`${apiUrl}/listings/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -69,7 +69,7 @@ const UpdateListing = () => {
 
         if (res.data.success) {
           const item = res.data.data;
-          
+
           // Verify ownership
           if (item.userEmail !== currentUser.email) {
             Swal.fire({
@@ -163,7 +163,7 @@ const UpdateListing = () => {
     setSubmitting(true);
     try {
       const token = await currentUser.getIdToken();
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
 
       const payload = {
         title,
@@ -309,7 +309,7 @@ const UpdateListing = () => {
               <label className="label py-1">
                 <span className="label-text font-semibold">Listing Image</span>
               </label>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Uploader */}
                 <div className="flex flex-col space-y-2 p-4 bg-base-200/40 rounded-2xl border border-base-200">
@@ -323,9 +323,9 @@ const UpdateListing = () => {
                   <div className="text-[10px] text-base-content/50">
                     Max size 2MB (converts to base64 format)
                   </div>
-                  
+
                   <div className="divider text-xs text-base-content/40 my-1">OR</div>
-                  
+
                   <span className="text-xs font-semibold text-base-content/75">Paste Image URL</span>
                   <input
                     type="url"

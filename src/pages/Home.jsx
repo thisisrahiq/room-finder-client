@@ -25,8 +25,8 @@ const CAROUSEL_SLIDES = [
 ];
 
 const LIFESTYLE_TAGS = [
-  "Non-smoker", "Pet-friendly", "Student", "Professional", 
-  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy", 
+  "Non-smoker", "Pet-friendly", "Student", "Professional",
+  "Night Owl", "Early Bird", "Vegetarian", "Clean & Tidy",
   "Gym Lover", "WFH"
 ];
 
@@ -39,7 +39,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://room-finder-server-tan.vercel.app';
         const res = await axios.get(`${apiUrl}/listings?status=available&limit=6`);
         if (res.data.success) {
           setFeaturedListings(res.data.data);
@@ -72,7 +72,7 @@ const Home = () => {
               Roommate Matching Made Easy
             </span>
           </Fade>
-          
+
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
             Find the Perfect <br />
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -105,16 +105,16 @@ const Home = () => {
         {/* Hero Carousel */}
         <div className="lg:col-span-7 relative h-[300px] sm:h-[400px] w-full overflow-hidden rounded-2xl shadow-xl group border border-base-200">
           {CAROUSEL_SLIDES.map((slide, idx) => (
-            <div 
+            <div
               key={idx}
               className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === carouselIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
             >
               {idx === carouselIndex && (
                 <>
-                  <img 
-                    src={slide.image} 
+                  <img
+                    src={slide.image}
                     alt={slide.title}
-                    className="w-full h-full object-cover brightness-[0.7] transform scale-105 transition-transform duration-[5000ms]" 
+                    className="w-full h-full object-cover brightness-[0.7] transform scale-105 transition-transform duration-[5000ms]"
                   />
                   <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-2">
                     <Slide direction="up" duration={600} triggerOnce>
@@ -129,13 +129,13 @@ const Home = () => {
 
           {/* Carousel Controls */}
           <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 z-20 flex justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button 
+            <button
               onClick={() => setCarouselIndex((prev) => (prev - 1 + CAROUSEL_SLIDES.length) % CAROUSEL_SLIDES.length)}
               className="btn btn-circle btn-sm btn-glass text-white border-none"
             >
               ❮
             </button>
-            <button 
+            <button
               onClick={() => setCarouselIndex((prev) => (prev + 1) % CAROUSEL_SLIDES.length)}
               className="btn btn-circle btn-sm btn-glass text-white border-none"
             >
@@ -146,7 +146,7 @@ const Home = () => {
           {/* Carousel Dots */}
           <div className="absolute bottom-4 right-6 z-20 flex space-x-2">
             {CAROUSEL_SLIDES.map((_, idx) => (
-              <button 
+              <button
                 key={idx}
                 onClick={() => setCarouselIndex(idx)}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === carouselIndex ? 'bg-primary w-6' : 'bg-white/50'}`}
@@ -244,19 +244,19 @@ const Home = () => {
             <div className="space-y-4 text-sm text-base-content/80">
               <div className="flex items-start space-x-3">
                 <svg className="w-5 h-5 text-emerald-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                 </svg>
                 <p><strong>Sleep Sync:</strong> Avoid late-night noise clashes by aligning Early Birds and Night Owls.</p>
               </div>
               <div className="flex items-start space-x-3">
                 <svg className="w-5 h-5 text-emerald-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                 </svg>
                 <p><strong>Cleanliness Agreement:</strong> Ensure house hygiene standards align before signing a lease.</p>
               </div>
               <div className="flex items-start space-x-3">
                 <svg className="w-5 h-5 text-emerald-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
                 </svg>
                 <p><strong>Pet Tolerance:</strong> Instantly discover pet-friendly environments or allergen-free spaces.</p>
               </div>
