@@ -59,6 +59,17 @@ const Footer = () => {
 
         <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-content/65">
           <p>© {new Date().getFullYear()} Co-Living Finder. All rights reserved.</p>
+          <p className="mt-2 sm:mt-0">
+            Developed by{' '}
+            <a
+              href="https://www.rahiq.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-primary hover:text-secondary transition-colors duration-200 underline underline-offset-2"
+            >
+              Rahiq Al Makhtum
+            </a>
+          </p>
           <div className="flex space-x-4 mt-4 sm:mt-0">
             <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
